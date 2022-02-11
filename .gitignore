@@ -1,0 +1,11 @@
+*git 
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db_sqlite3
+media
+venv
+todo.txt
+theme
