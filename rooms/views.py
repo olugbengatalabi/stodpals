@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Room, Topic, Message
 from .forms import RoomForm
+from django.core.files.storage import FileSystemStorage
 
 def index(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -124,18 +125,40 @@ def deleteMessage(request, pk):
     return render(request, 'rooms/delete.html', {'obj': message})
 
 
-# @login_required(login_url='login')
-# def updateUser(request):
-#     user = request.user
-#     form = UserForm(instance=user)
+@login_required(login_url='login')
+def updateUser(request):
+    if request.method == "POST":
+        user = request.user
+        bio = request.POST['bio']
+        try:
+            avatar = request.FILES["avatar"]
+            fs = FileSystemStorage()
+            filename = fs.save(avatar.name, avatar)
+            upload_file_url = fs.url(filename)
+                            
+            if filename != "" and filename is not None:
+                user.userprofile.avatar = filename
+                
+        except:
+            pass
+        
+        if bio != "" and bio is not None:
+            user.userprofile.bio = bio
+            messages.success(request, "updated")
+        else:
+            messages.error(request, "bio cannot be empty")
 
-#     if request.method == 'POST':
-#         form = UserForm(request.POST, request.FILES, instance=user)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('user-profile', pk=user.id)
+            
+    # user = request.user
+    # # form = UserForm(instance=user)
 
-#     return render(request, 'accounts/update-user.html', {'form': form})
+    # if request.method == 'POST':
+    #     form = UserForm(request.POST, request.FILES, instance=user)
+    #     if form.is_valid():
+    #         form.save()
+    #         return redirect('user-profile', pk=user.id)
+
+    return render(request, 'accounts/update-user.html',)
 
 
 def topicsPage(request):
