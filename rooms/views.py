@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
@@ -127,8 +128,8 @@ def deleteMessage(request, pk):
 
 @login_required(login_url='login')
 def updateUser(request):
+    user = request.user
     if request.method == "POST":
-        user = request.user
         bio = request.POST['bio']
         try:
             avatar = request.FILES["avatar"]
@@ -147,8 +148,16 @@ def updateUser(request):
             messages.success(request, "updated")
         else:
             messages.error(request, "bio cannot be empty")
-
+        old_bio = ""
+        context = {"old": old_bio}
             
+    else:
+        try:
+            old_bio = user.userprofile.bio
+            context = {"old_bio":old_bio}
+        except:
+            pass
+        
     # user = request.user
     # # form = UserForm(instance=user)
 
@@ -158,7 +167,7 @@ def updateUser(request):
     #         form.save()
     #         return redirect('user-profile', pk=user.id)
 
-    return render(request, 'accounts/update-user.html',)
+    return render(request, 'accounts/update-user.html',context)
 
 
 def topicsPage(request):
