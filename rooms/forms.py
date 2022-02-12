@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from .models import Room
-from django.conf import settings
+from django.contrib.auth import get_user_model
 
 
 
@@ -13,6 +13,6 @@ class RoomForm(ModelForm):
 
 # class UserForm(ModelForm):
 #     class Meta:
-#         model = settings.AUTH_USER_MODEL
+#         model = get_user_model()
         
 #         fields = ['avatar', 'name', 'username', 'email', 'bio']

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Room, Topic, Message
@@ -45,14 +46,15 @@ def room(request, pk):
     return render(request, 'room.html', context)
 
 
-# def userProfile(request, pk):
-#     user = User.objects.get(id=pk)
-#     rooms = user.room_set.all()
-#     room_messages = user.message_set.all()
-#     topics = Topic.objects.all()
-#     context = {'user': user, 'rooms': rooms,
-#                'room_messages': room_messages, 'topics': topics}
-#     return render(request, 'base/profile.html', context)
+def userProfile(request, pk):
+    user_object = settings.AUTH_USER_MODEL
+    user = user_object.objects.all()
+    rooms = user.room_set.all()
+    room_messages = user.message_set.all()
+    topics = Topic.objects.all()
+    context = {'user': user, 'rooms': rooms,
+               'room_messages': room_messages, 'topics': topics}
+    return render(request, 'base/profile.html', context)
 
 
 @login_required(login_url='login')
