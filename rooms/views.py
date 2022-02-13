@@ -46,7 +46,7 @@ def room(request, pk):
 
     context = {'room': room, 'room_messages': room_messages,
                'participants': participants}
-    return render(request, 'room.html', context)
+    return render(request, 'rooms/room.html', context)
 
 
 def userProfile(request, pk):
@@ -59,7 +59,7 @@ def userProfile(request, pk):
         'user': user, 'rooms': rooms,
         'room_messages': room_messages, 'topics': topics
         }
-    return render(request, 'accounts/profile.html', context)
+    return render(request, 'account/profile.html', context)
 
 
 @login_required(login_url='account_login')
@@ -173,7 +173,7 @@ def updateUser(request):
     #         form.save()
     #         return redirect('user-profile', pk=user.id)
 
-    return render(request, 'accounts/update-user.html',context)
+    return render(request, 'account/update-user.html',context)
 
 
 def topicsPage(request):
@@ -184,4 +184,4 @@ def topicsPage(request):
 
 def activityPage(request):
     room_messages = Message.objects.all()
-    return render(request, 'accoounts/activity.html', {'room_messages': room_messages})
+    return render(request, 'account/activity.html', {'room_messages': room_messages})
