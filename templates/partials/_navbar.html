@@ -24,7 +24,7 @@
             <div class="header__user">
                 <a href="{% url 'account_logout'%}">
                     <div class="avatar avatar--medium active">
-                        <img src="{{request.user.avatar.url}}" />
+                        <img src="{{request.user.userprofile.avatar.url}}" />
                     </div>
                     <p>{{request.user.username}} <span>@{{request.user.username}}</span></p>
                 </a>

@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load account socialaccount %}
+
+
+{% block contentful %}
+
+<main class="main">
+  {% if form.errors %}
+  <div class="alert__container" id="alert__container">
+  {% for field in form %}
+      {% for error in field.errors %}
+
+        <div class="alert alert-error">
+              <div class="alert alert-dismissible text-center" role="alert">
+                <div class="message__icon">
+                  <i class="ri-{{message.tags}}-line"></i>
+                </div>
+                <p>
+                  {{error|escape }}
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+  {% endfor %}
+  {% for error in form.non_field_errors %}
+      <div class="alert alert-error">
+          <!-- <strong>{{ error|escape }}</strong> -->
+          <div class="alert alert-dismissible text-center" role="alert">
+            <div class="message__icon">
+              <i class="ri-information-line"></i>
+            </div>
+            <p>
+              {{ error|escape }}
+            </p>
+          </div>
+      </div>
+  {% endfor %}
+</div>
+  {% endif %}
+  <section class="sign-in container">
+      <div class="">
+          <div class="signin-content">
+              <div class="signin-image">
+                  <figure  class="display"><img src="{%static 'img/signin-image.jpg'%}" alt="sing up image"></figure>
+                  
+              </div>
+
+              <div class="signin-form">
+                  <h2 class="form-title" style="text-align: center;">{% trans "Sign in" %}</h2>
+                  {% get_providers as socialaccount_providers %}
+
+        {% if socialaccount_providers %}
+
+          
+
+        <div class="socialaccount_ballot">
+
+          <ul class="socialaccount_providers">
+            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+          </ul>
+
+          <div class="login-or">{% trans 'or' %}</div>
+
+        </div>
+
+        {% include "socialaccount/snippets/login_extra.html" %}
+
+        {% else %}
+        <p>{% blocktrans %}If you have not created an account yeeeeeeeeeeeeet, then please
+        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+        {% endif %}
+                  
+        
+        <form method="POST" class="register-form" action="{% url 'account_login' %}" id="login-form">
+          {% csrf_token %}
+          <div class="form-group">
+                          <label for="your_email"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                          
+                          {{ form.login }}
+                      </div>
+                      <div class="form-group">
+                          <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+
+                          {{ form.password }}
+                          <a href="{% url 'account_reset_password'%}" style="color: var(--text-color); font-size:smaller;">Forgot password
+                          </a>
+                      </div>
+
+                      <div class="sign-up__container">
+
+                        <button type="submit" name = "signin" id = "signin" class="add-to-cart__button">
+                          Log in
+                          <i class="ri-arrow-right-fill button__icon"></i>
+                      </button>
+                      <a href="{% url 'account_signup'%}" class="add-to-cart__button" style="padding: 0.5rem 0.8rem">Signup<i class="ri-user-add-line button__icon"></i>
+                  
+                      </a>
+                    </div>
+                  </form>
+                 
+
+              </div>
+          </div>
+      </div>
+    </section>
+  </main>
+  {% endblock contentful %}
+
+{% block content %}
+<main class="auth layout">
+
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+          <h3>Login</h3>
+        </div>
+      </div>
+      <div class="layout__body">
+        <h2 class="auth__tagline">Find your study partner</h2>
+        {% if form.errors %}
+            <div class="alert__container" id="alert__container">
+            {% for field in form %}
+                {% for error in field.errors %}
+
+                  <div class="alert alert-error">
+                        <div class="alert alert-dismissible text-center" role="alert">
+                          <div class="message__icon">
+                            <i class="ri-{{message.tags}}-line"></i>
+                          </div>
+                          <p>
+                            {{error|escape }}
+                          </p>
+                        </div>
+                      </div>
+                      {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-error">
+                    <!-- <strong>{{ error|escape }}</strong> -->
+                    <div class="alert alert-dismissible text-center" role="alert">
+                      <div class="message__icon">
+                        <i class="ri-information-line"></i>
+                      </div>
+                      <p>
+                        {{ error|escape }}
+                      </p>
+                    </div>
+                </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form class="form" action="{% url 'account_login' %}" id="login-form" method="POST">
+          {% csrf_token %}
+          <div class="form__group">
+            <label for="your_email"><i class="zmdi zmdi-account material-icons-name"></i></label>
+            
+            {{ form.login }}
+        </div>
+        <div class="form__group">
+          <label for="your_pass" name = "password" id= "password"><i class="zmdi zmdi-lock"></i></label>
+
+          {{ form.password }}
+          <a href="{% url 'account_reset_password'%}" style="color: var(--text-color); font-size:smaller;">Forgot password
+          </a>
+      </div>
+          <button class="btn btn--main" name="signin" id="signin" type="submit">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>lock</title>
+              <path
+                d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z">
+              </path>
+              <path
+                d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z">
+              </path>
+            </svg>
+
+            Login
+          </button>
+        </form>
+        
+        {% get_providers as socialaccount_providers %}
+
+        {% if socialaccount_providers %}
+        <div class="socialaccount_ballot">
+
+          <ul class="socialaccount_providers">
+            continue with {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+          </ul>
+
+
+
+        </div>
+
+        {% include "socialaccount/snippets/login_extra.html" %}
+
+        {% else %}
+        <p>{% blocktrans %}If you have not created an account yet, then please
+        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+        {% endif %}
+
+
+        <div class="auth__action">
+          <p>Haven't signed up yet?</p>
+          <a href="{% url 'account_signup' %}" class="btn btn--link">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+{% endblock content %}
+  
