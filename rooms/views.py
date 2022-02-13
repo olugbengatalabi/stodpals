@@ -1,5 +1,5 @@
 from multiprocessing import context
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.conf import settings
@@ -8,6 +8,7 @@ from django.db.models import Q
 from .models import Room, Topic, Message
 from .forms import RoomForm
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth import get_user_model
 
 def index(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -49,17 +50,19 @@ def room(request, pk):
 
 
 def userProfile(request, pk):
-    user_object = settings.AUTH_USER_MODEL
-    user = user_object.objects.all()
+    user_obj= get_user_model()
+    user = get_object_or_404(user_obj, id=pk)
     rooms = user.room_set.all()
     room_messages = user.message_set.all()
     topics = Topic.objects.all()
-    context = {'user': user, 'rooms': rooms,
-               'room_messages': room_messages, 'topics': topics}
-    return render(request, 'base/profile.html', context)
+    context = {
+        'user': user, 'rooms': rooms,
+        'room_messages': room_messages, 'topics': topics
+        }
+    return render(request, 'accounts/profile.html', context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='account_login')
 def createRoom(request):
     form = RoomForm()
     topics = Topic.objects.all()
@@ -79,7 +82,7 @@ def createRoom(request):
     return render(request, 'rooms/room_form.html', context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='account_login')
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
@@ -100,7 +103,7 @@ def updateRoom(request, pk):
     return render(request, 'room_form.html', context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='account_login')
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
 
@@ -113,7 +116,7 @@ def deleteRoom(request, pk):
     return render(request, 'rooms/delete.html', {'obj': room})
 
 
-@login_required(login_url='login')
+@login_required(login_url='account_login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
 
@@ -126,7 +129,7 @@ def deleteMessage(request, pk):
     return render(request, 'rooms/delete.html', {'obj': message})
 
 
-@login_required(login_url='login')
+@login_required(login_url='account_login')
 def updateUser(request):
     user = request.user
     if request.method == "POST":
@@ -139,24 +142,27 @@ def updateUser(request):
                             
             if filename != "" and filename is not None:
                 user.userprofile.avatar = filename
+                user.userprofile.save()
                 
         except:
             pass
         
         if bio != "" and bio is not None:
             user.userprofile.bio = bio
+            user.userprofile.save()
             messages.success(request, "updated")
         else:
             messages.error(request, "bio cannot be empty")
-        old_bio = ""
-        context = {"old": old_bio}
-            
+
     else:
-        try:
-            old_bio = user.userprofile.bio
-            context = {"old_bio":old_bio}
-        except:
-            pass
+        bio = user.userprofile.bio
+        if not bio:
+            bio = "Bio"
+    
+    context = {"old_bio":bio}
+            
+            
+
         
     # user = request.user
     # # form = UserForm(instance=user)
