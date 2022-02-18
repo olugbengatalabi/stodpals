@@ -83,7 +83,7 @@
                 <div class="thread__author">
                   <a href="{% url 'user-profile' message.user.id %}" class="thread__authorInfo">
                     <div class="avatar avatar--small">
-                      <img src="{{message.user.avatar.url}}" />
+                      <img src="{{message.user.userprofile.avatar.url}}" />
                     </div>
                     <span>@{{message.user.username}}</span>
                   </a>
@@ -128,10 +128,10 @@
         {% for user in participants %}
         <a href="{%  url 'user-profile' user.id %}" class="participant">
           <div class="avatar avatar--medium">
-            <img src="{{user.avatar.url}}" />
+            <img src="{{user.userprofile.avatar.url}}" />
           </div>
           <p>
-            {{user.name}}
+            {{user.lastname}}
             <span>@{{user.username}}</span>
           </p>
         </a>
